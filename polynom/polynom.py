@@ -36,14 +36,16 @@ def _parse_one_summand(text, start_index):
 
 
 def _power(base, exponent):
-    assert len(base) == 1
     assert len(exponent) == 1
+    assert next(iter(exponent)) == 0
+    power_const = exponent[next(iter(exponent))]
 
-    base_base = next(iter(base))
-    exponent_base = next(iter(exponent))
-    base_exponent = base[base_base]
-    exponent_exponent = exponent[exponent_base]
-    return {base_base * exponent_exponent: base_exponent ** exponent_exponent}
+    # TODO: make this optimal:
+    result = base
+    for i in range(1, power_const):
+        result = _multiply(result, base)
+
+    return result
 
 
 def _multiply(factors1, factors2):
@@ -146,10 +148,13 @@ def simplify(input_polynom):
     if m:
         x = m.group()[0]
 
+    if input_polynom.find(x + x) != -1:
+        raise ValueError(" (Instead 'xx' you must use 'x^2')")
+
     if re.search(r'[a-zA-Z]', input_polynom.replace(x, '')):
         raise ValueError(" (One variable supported only)")
 
-    if not re.fullmatch(r'[\-\+\d'+x+'\(][\-\+\*\d'+x+'\^\(\)]*['+x+'\d\)]', input_polynom):
+    if not re.fullmatch(r'([\-\+\d'+x+'\(][\-\+\*\d'+x+'\^\(\)]*)?['+x+'\d\)]', input_polynom):
         raise ValueError(" (Incorrect polynom)")
 
     m = re.search(r'[\-\+\*\^][\-\+\*\^]', input_polynom)

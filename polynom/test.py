@@ -11,6 +11,19 @@ class PolynomTest(unittest.TestCase):
     def test(self):
         self.assertEqual("", polynom.simplify(""))
 
+        self.assertEqual("1", polynom.simplify("1"))
+        self.assertEqual("0", polynom.simplify("0"))
+        self.assertEqual("0", polynom.simplify("00"))
+
+        self.assertEqual("4x^2+4x+1", polynom.simplify("(2x+1)(2x+1)"))
+        self.assertEqual("4x^2+4x+1", polynom.simplify("(2x+1)*(2x+1)"))
+        self.assertEqual("4x^2+4x+1", polynom.simplify("(2x+1)^2"))
+        self.assertEqual("4x^2+4x+1", polynom.simplify("(2x+1)^(1+1)"))
+        self.assertEqual("4x^2", polynom.simplify("(2x)^(1+1)"))
+
+        self.assertEqual("x^8+8x^7+28x^6+56x^5+70x^4+56x^3+28x^2+8x+1", polynom.simplify("(x+1)*(x+1)*(x+1)*(x+1)*(x+1)*(x+1)*(x+1)*(x+1)"))
+        self.assertEqual("x^8+8x^7+28x^6+56x^5+70x^4+56x^3+28x^2+8x+1", polynom.simplify("(x+1)^(4+4)"))
+
         self.assertEqual("x^2+x", polynom.simplify("+x(x+1)"))
         self.assertEqual("-x^2-x", polynom.simplify("-x(x+1)"))
         self.assertEqual("x^2+x", polynom.simplify("x(x+1)"))
@@ -102,8 +115,7 @@ class PolynomTest(unittest.TestCase):
         self.assertRaises(ValueError, polynom.simplify, "1^^4")
         self.assertRaises(ValueError, polynom.simplify, "(1^)")
 
-    def test_experimental(self):
-        self.assertEqual("x^2", polynom.simplify("xx"))  # ?
+        self.assertRaises(ValueError, polynom.simplify, "xx")
 
 
 ###############################################################################
